@@ -47,6 +47,17 @@ public class Level {
         print();
     }
 
+    public void movement(Dir dir){
+        if (cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType() == ' ') {
+            cells[lineMan][colMan].setType(' ');
+            cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
+            lineMan+=dir.AddToLine();
+            colMan+=dir.AddToCol();
+            print();
+            System.out.println();
+        }
+    }
+
     public void moveMan(Dir dir) {
         boolean found=false;
         if(lineMan==0&&colMan==0) {
@@ -61,58 +72,16 @@ public class Level {
         }
         switch (dir) {
             case UP:
-                if (cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType() == ' ') {
-                    cells[lineMan][colMan].setType(' ');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
-                    print();
-                    System.out.println();
-                }
+                movement(dir);
                 break;
-//                case DOWN:
-//                    found = false;
-//                    for (line = 0; line < cells.length && !found; ++line) {
-//                        for (int col = 0; col < cells[line].length && !found; ++col)
-//                            if (cells[line][col].getType() == '@') {
-//                                found=true;
-//                                lineMan = cells[line][col].getLine();
-//                                colMan = cells[line][col].getCol();
-//                            }
-//                    }
-//                    System.out.print("line:"+lineMan);
-//                    System.out.print("col:"+colMan);
-//                    if (cells[lineMan + dir.getLine()][colMan + dir.getCol()].getType() == ' ') {
-//                        cells[lineMan][colMan].setType(' ');
-//                        cells[lineMan + dir.getLine()][colMan + dir.getCol()].setType('@');
-//                        print();
-//                    }
-//                    break;
-//                case RIGHT:
-//                    found = false;
-//                    for (line = 0; line < cells.length && !found; ++line) {
-//                        for (int col = 0; col < cells[line].length && !found; ++col)
-//                            if (cells[line][col].getType() == '@') {
-//                                found=true;
-//                                lineMan = cells[line][col].getLine();
-//                                colMan = cells[line][col].getCol();
-//                            }
-//                    }
-//                    System.out.print("line:"+lineMan);
-//                    System.out.print("col:"+colMan);
-//                    if (cells[lineMan + dir.getLine()][colMan + dir.getCol()].getType() == ' ') {
-//                        cells[lineMan][colMan].setType(' ');
-//                        cells[lineMan + dir.getLine()][colMan + dir.getCol()].setType('@');
-//                        print();
-//                    }
-//                    break;
+            case DOWN:
+                movement(dir);
+                break;
+            case RIGHT:
+                movement(dir);
+                break;
             case LEFT:
-                lineMan+=dir.AddToLine();
-                colMan+=dir.AddToCol();
-                if (cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType() == ' ') {
-                    cells[lineMan][colMan].setType(' ');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
-                    print();
-                    System.out.println();
-                }
+                movement(dir);
                 break;
         }
     }
