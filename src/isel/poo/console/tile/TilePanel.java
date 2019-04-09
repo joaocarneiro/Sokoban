@@ -15,7 +15,7 @@ public class TilePanel extends ParentView {
         side = tileSide;
         height = tilesHeight * side;
         width = tilesWidth * side;
-    }
+     }
 
     public Location getModelPosition(int line, int col) {
         assert(parent==null);

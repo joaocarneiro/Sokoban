@@ -2,6 +2,8 @@ package isel.poo.console;
 
 import isel.leic.pg.Console;
 
+import javax.swing.*;
+
 /**
  * Base class of an element displayed in the window.<br/>
  * One View can be contained in another View or ParentView.<br/><br/>
@@ -11,7 +13,7 @@ import isel.leic.pg.Console;
  */
 public class View {
     protected int top, left, height, width;
-    protected View parent= null;  // The parent view (null if is a root View)
+    protected View parent = null;  // The parent view (null if is a root View)
     protected int bkColor;
 
     /**
