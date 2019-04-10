@@ -1,15 +1,5 @@
 package isel.poo.sokoban.model;
 
-import isel.leic.pg.Console;
-import isel.poo.console.ParentView;
-import isel.poo.console.View;
-import isel.poo.console.Window;
-import isel.poo.sokoban.ctrl.Sokoban;
-
-import static isel.leic.pg.Console.*;
-import static java.awt.event.KeyEvent.*;
-import static java.awt.event.KeyEvent.VK_A;
-
 public class Level {
 
     private int levelNumber;
@@ -20,11 +10,11 @@ public class Level {
     private int remainingBoxes;
     private int moves;
     private Observer observer;
+    private boolean start;
     private boolean manIsDead = false;
     private boolean isFinished = false;
-    int previousLine=0;
     private Cell[][] cells;
-    int lineMan=0, colMan=0;
+    private int lineMan = 0, colMan = 0;
 
     public Level(int levelNumber, int height, int width) {
         this.levelNumber = levelNumber;
@@ -34,7 +24,7 @@ public class Level {
     }
 
     public void setObserver(Observer updater) {
-        this.observer=updater;
+        observer = updater;
     }
 
     public interface Observer {
@@ -44,25 +34,35 @@ public class Level {
     }
 
     void init(Game game) {
+        isFinished();
+        manIsDead();
+        startingBoxes();
         print();
     }
 
-    public void movement(Dir dir){
-        if (cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType() == ' ') {
-            cells[lineMan][colMan].setType(' ');
-            cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
-            lineMan+=dir.AddToLine();
-            colMan+=dir.AddToCol();
-            print();
-            System.out.println();
+    public void moveMan(Dir dir) {
+        getManInitialPosition();
+        switch (dir) {
+            case UP:
+                moveAgainst(dir, ' ', '@');
+                break;
+            case DOWN:
+                moveAgainst(dir, ' ', '@');
+                break;
+            case RIGHT:
+                moveAgainst(dir, ' ', '@');
+                break;
+            case LEFT:
+                moveAgainst(dir, ' ', '@');
+                break;
         }
     }
 
-    public void moveMan(Dir dir) {
-        boolean found=false;
-        if(lineMan==0&&colMan==0) {
+    public void getManInitialPosition() {
+        boolean found = false;
+        if (lineMan == 0 && colMan == 0) {
             for (line = 0; line < cells.length && !found; ++line) {
-                for (int col = 0; col < cells[line].length && !found; ++col)
+                for (col = 0; col < cells[line].length && !found; ++col)
                     if (cells[line][col].getType() == '@') {
                         found = true;
                         lineMan = cells[line][col].getLine();
@@ -70,18 +70,116 @@ public class Level {
                     }
             }
         }
+    }
+
+    public void startingBoxes(){
+        remainingBoxes=0;
+        for (line = 0; line < cells.length && !start; ++line) {
+            for (col = 0; col < cells[line].length; ++col) {
+                if (cells[line][col].getType() == 'B') {
+                    remainingBoxes++;
+                }
+            }
+        }
+        start=true;
+    }
+
+    public void moveAgainst(Dir dir, char previous, char current) {
+        char type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType();
+        switch (type) {
+            case ' ':
+                cells[lineMan][colMan].setType(previous);
+                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType(current);
+                lineMan += dir.AddToLine();
+                colMan += dir.AddToCol();
+                moves += 1;
+                print();
+                System.out.println();
+                break;
+            case 'B':
+                checkBoxSurroundings(dir);
+                break;
+            case 'H':
+                pitOfDeath(dir);
+                break;
+            case '*':
+                break;
+        }
+    }
+
+    public void pitOfDeath(Dir dir){
+        char type;
         switch (dir) {
             case UP:
-                movement(dir);
-                break;
             case DOWN:
-                movement(dir);
-                break;
             case RIGHT:
-                movement(dir);
+            case LEFT:
+                type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getType();
+                if(type=='H'){
+                    cells[lineMan][colMan].setType(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('H');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    isFinished=true;
+                    manIsDead=true;
+                    print();
+                    System.out.println();
+                }
+                break;
+        }
+    }
+
+    public void checkBoxSurroundings(Dir dir){
+        char type;
+        switch (dir){
+            case UP:
+                type = cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].getType();
+                if(type==' '){
+                    cells[lineMan][colMan].setType(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setType('B');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    print();
+                    System.out.println();
+                }
+                if(type=='H'){
+                    cells[lineMan][colMan].setType(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setType(' ');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    remainingBoxes--;
+                    print();
+                    System.out.println();
+                }
                 break;
             case LEFT:
-                movement(dir);
+                type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].getType();
+                if(type==' '){
+                    cells[lineMan][colMan].setType(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setType('B');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    print();
+                    System.out.println();
+                }
+                if(type=='H'){
+                    cells[lineMan][colMan].setType(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setType('@');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setType(' ');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    remainingBoxes--;
+                    print();
+                    System.out.println();
+                }
                 break;
         }
     }
@@ -126,12 +224,14 @@ public class Level {
         cells[line][col] = new Cell(col, line, type);
     }
 
-    public void print(){
-        for(int i=0;i<cells.length;++i){
-            for (int j=0;j<cells[i].length;++j){
+    public void print() {
+        for (int i = 0; i < cells.length; ++i) {
+            for (int j = 0; j < cells[i].length; ++j) {
                 System.out.print(cells[i][j].getType());
             }
             System.out.println();
         }
+        System.out.println(getMoves());
+        System.out.println(getRemainingBoxes());
     }
 }
