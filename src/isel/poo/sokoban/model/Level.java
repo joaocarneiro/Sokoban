@@ -7,7 +7,7 @@ public class Level {
     private int width;
     private int line;
     private int col;
-    private int remainingBoxes;
+    private int boxes;
     private int moves;
     private Observer observer;
     private boolean start;
@@ -72,24 +72,13 @@ public class Level {
         }
     }
 
-    public void startingBoxes(){
-        remainingBoxes=0;
-        for (line = 0; line < cells.length && !start; ++line) {
-            for (col = 0; col < cells[line].length; ++col) {
-                if (cells[line][col].getTypeAbove() == 'B') {
-                    remainingBoxes++;
-                }
-            }
-        }
-        start=true;
-    }
-
     public void moveAgainst(Dir dir) {
         char type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
         switch (type) {
             case ' ':
-                cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
-                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+                cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow()); //onde esta
+                cells[lineMan][colMan].setTypeBelow(' ');
+                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@'); //para onde vai
                 lineMan += dir.AddToLine();
                 colMan += dir.AddToCol();
                 moves += 1;
@@ -100,7 +89,7 @@ public class Level {
                 checkBoxSurroundings(dir);
                 break;
             case 'H':
-                pitOfDeath(dir);
+                pitOfDeathOrGlory(dir);
                 break;
             case '*':
                 specialPlace(dir);
@@ -111,76 +100,20 @@ public class Level {
         }
     }
 
-    public void specialPlace(Dir dir){
-        char type;
-        switch (dir) {
-            case UP:
-            case DOWN:
-            case LEFT:
-            case RIGHT:
-                type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
-                if(type=='@') {
-                    cells[lineMan][colMan].setTypeAbove('@');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('*');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
-                    print();
-                    System.out.println();
-                }
-                if(type=='B'){
-                    cells[lineMan][colMan].setTypeAbove('B');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('*');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
-                    print();
-                    System.out.println();
-                }
-                if(type==' '){
-                    cells[lineMan][colMan].setTypeAbove('*');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove(' ');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
-                    print();
-                    System.out.println();
-                }
-                break;
-        }
-    }
-
-    public void pitOfDeath(Dir dir){
-        char type;
-        switch (dir) {
-            case UP:
-            case DOWN:
-            case RIGHT:
-            case LEFT:
-                type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
-                if(type=='H'){
-                    cells[lineMan][colMan].setTypeAbove(' ');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
-                    isFinished=true;
-                    manIsDead=true;
-                    print();
-                    System.out.println();
-                }
-                break;
-        }
-    }
-
     public void checkBoxSurroundings(Dir dir){
         char type;
+        char typeB = cells[lineMan][colMan].getTypeBelow();
         switch (dir){
             case UP:
             case DOWN:
                 type = cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].getTypeAbove();
                 if(type==' '){
-                    cells[lineMan][colMan].setTypeAbove(' ');
+                    if(typeB=='*'){
+                        cells[lineMan][colMan].setTypeAbove('*');
+                        cells[lineMan][colMan].setTypeBelow(' ');
+                    }
+                    else
+                        cells[lineMan][colMan].setTypeAbove(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove('B');
                     lineMan += dir.AddToLine();
@@ -190,13 +123,28 @@ public class Level {
                     System.out.println();
                 }
                 if(type=='H'){
+                    if(cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeBelow()=='*'){
+                        cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+                    }
                     cells[lineMan][colMan].setTypeAbove(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove(' ');
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    remainingBoxes--;
+                    boxes--;
+                    print();
+                    System.out.println();
+                }
+                if(type=='*'){
+                    cells[lineMan][colMan].setTypeAbove(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow(' ');
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove('B');
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeBelow('*');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
                     print();
                     System.out.println();
                 }
@@ -205,7 +153,12 @@ public class Level {
             case RIGHT:
                 type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].getTypeAbove();
                 if(type==' '){
-                    cells[lineMan][colMan].setTypeAbove(' ');
+                    if(typeB=='*'){
+                        cells[lineMan][colMan].setTypeAbove('*');
+                        cells[lineMan][colMan].setTypeBelow(' ');
+                    }
+                    else
+                        cells[lineMan][colMan].setTypeAbove(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeAbove('B');
                     lineMan += dir.AddToLine();
@@ -221,7 +174,19 @@ public class Level {
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    remainingBoxes--;
+                    boxes--;
+                    print();
+                    System.out.println();
+                }
+                if(type=='*') {
+                    cells[lineMan][colMan].setTypeAbove(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeAbove('B');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeBelow('*');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
                     print();
                     System.out.println();
                 }
@@ -229,12 +194,65 @@ public class Level {
         }
     }
 
+    public void pitOfDeathOrGlory(Dir dir){
+        switch (dir) {
+            case UP:
+            case DOWN:
+            case RIGHT:
+            case LEFT:
+                if(checkBoxesInPlace()){
+                    isFinished=true;
+                }
+                else {
+                    cells[lineMan][colMan].setTypeAbove(' ');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    isFinished = true;
+                    manIsDead = true;
+                    print();
+                    System.out.println();
+                }
+                break;
+        }
+    }
+
+    public void specialPlace(Dir dir){
+        switch (dir) {
+            case UP:
+            case DOWN:
+            case LEFT:
+            case RIGHT:
+                cells[lineMan][colMan].setTypeAbove(' ');
+                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow('*');
+                lineMan += dir.AddToLine();
+                colMan += dir.AddToCol();
+                moves += 1;
+                print();
+                System.out.println();
+        }
+    }
+
+    public void startingBoxes(){
+        boxes=0;
+        for (line = 0; line < cells.length && !start; ++line) {
+            for (col = 0; col < cells[line].length; ++col) {
+                if (cells[line][col].getTypeAbove() == 'B') {
+                    boxes++;
+                }
+            }
+        }
+        start=true;
+    }
+
     public int getMoves() {
         return this.moves;
     }
 
     public int getRemainingBoxes() {
-        return this.remainingBoxes;
+        return this.boxes;
     }
 
     public int getNumber() {
@@ -258,6 +276,20 @@ public class Level {
         return this.manIsDead;
     }
 
+    public boolean checkBoxesInPlace(){
+        int boxesInPlace=0;
+        for (int i = 0; i < cells.length; ++i) {
+            for (int j = 0; j < cells[i].length; ++j) {
+                if(cells[i][j].getTypeAbove()=='B'&&cells[i][j].getTypeBelow()=='*')
+                    boxesInPlace++;
+            }
+        }
+        if(boxesInPlace==boxes){
+            return true;
+        }
+        return false;
+    }
+
     public boolean isFinished() {
         return this.isFinished;
     }
@@ -275,7 +307,7 @@ public class Level {
     public void print() {
         for (int i = 0; i < cells.length; ++i) {
             for (int j = 0; j < cells[i].length; ++j) {
-                System.out.print(cells[i][j].getTypeAbove()/*+"-"+cells[i][j].getTypeBelow()*/);
+                System.out.print(cells[i][j].getTypeAbove());
             }
             System.out.println();
         }

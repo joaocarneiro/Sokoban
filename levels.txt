@@ -1,4 +1,4 @@
-/* 
+/*
  ISEL:POO 18-19V
  Sokoban levels description
  . - None
@@ -23,7 +23,7 @@ XX  HXXX
 a=*B
 
 //Mini Cosmos 2
-#2 8 x 8 
+#2 8 x 8
 ..XXXXXX
 XXX   HX
 X B X XX
@@ -32,9 +32,9 @@ X    X X
 XXBX*  X
 .X@  XXX
 .XXXXX..
- 
-//Micro Cosmos 4 
-#3 6 x 10 
+
+//Micro Cosmos 4
+#3 6 x 10
 ......XXXX
 XXXXXXX *X
 X B B BB X
@@ -44,7 +44,7 @@ XXX   XXXX
 a=*@
 
 //Micro Cosmos 6
-#4 8 x 8 
+#4 8 x 8
 .XXXXX..
 .X   X..
 .X X XX.
@@ -53,12 +53,5 @@ X BaB  X
 X  a X X
 XX *  bX
 .XXXXXXX
-a=*B 
+a=*B
 b=*@
- 
- 
- 
- 
- 
- 
- 
