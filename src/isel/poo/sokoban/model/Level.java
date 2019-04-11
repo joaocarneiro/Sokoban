@@ -103,9 +103,49 @@ public class Level {
                 pitOfDeath(dir);
                 break;
             case '*':
+                specialPlace(dir);
                 //IMPLEMENTAR O ASTERISCO COM O HOMEM POR CIMA
                 //TEM DE SE FAZER O SETBELOW COM O ASTERISCO E SETABOVE COM O HOMEM
                 //ASSIM QUE SAIR, O SETBELOW RETORNA AO SETABOVE
+                break;
+        }
+    }
+
+    public void specialPlace(Dir dir){
+        char type;
+        switch (dir) {
+            case UP:
+            case DOWN:
+            case LEFT:
+            case RIGHT:
+                type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
+                if(type=='@') {
+                    cells[lineMan][colMan].setTypeAbove('@');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('*');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    print();
+                    System.out.println();
+                }
+                if(type=='B'){
+                    cells[lineMan][colMan].setTypeAbove('B');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('*');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    print();
+                    System.out.println();
+                }
+                if(type==' '){
+                    cells[lineMan][colMan].setTypeAbove('*');
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove(' ');
+                    lineMan += dir.AddToLine();
+                    colMan += dir.AddToCol();
+                    moves += 1;
+                    print();
+                    System.out.println();
+                }
                 break;
         }
     }
@@ -137,6 +177,7 @@ public class Level {
         char type;
         switch (dir){
             case UP:
+            case DOWN:
                 type = cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].getTypeAbove();
                 if(type==' '){
                     cells[lineMan][colMan].setTypeAbove(' ');
@@ -161,6 +202,7 @@ public class Level {
                 }
                 break;
             case LEFT:
+            case RIGHT:
                 type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].getTypeAbove();
                 if(type==' '){
                     cells[lineMan][colMan].setTypeAbove(' ');
@@ -233,7 +275,7 @@ public class Level {
     public void print() {
         for (int i = 0; i < cells.length; ++i) {
             for (int j = 0; j < cells[i].length; ++j) {
-                System.out.print(cells[i][j].getTypeAbove());
+                System.out.print(cells[i][j].getTypeAbove()/*+"-"+cells[i][j].getTypeBelow()*/);
             }
             System.out.println();
         }
