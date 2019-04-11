@@ -3,20 +3,20 @@ public class Cell {
 
     private int l;
     private int c;
-    private char type;
+    private char typeAbove;
+    private char typeBelow;
 
     public Cell(int l, int c){
         this.l=l;
         this.c=c;
     }
 
-    public Cell(int l, int c, char type){
+    public Cell(int l, int c, char typeAbove, char typeBelow){
         this.l=l;
         this.c=c;
-        this.type=type;
+        this.typeAbove=typeAbove;
+        this.typeBelow=typeBelow;
     }
-
-    public Cell(){}
 
     public int getLine(){
         return this.l;
@@ -26,7 +26,9 @@ public class Cell {
         return this.c;
     }
 
-    public char getType() {return type;}
+    public char getTypeAbove() {return this.typeAbove;}
+
+    public char getTypeBelow() {return this.typeBelow;}
 
     public void setLine(int line){
         this.l=line;
@@ -36,5 +38,7 @@ public class Cell {
         this.c=col;
     }
 
-    public void setType(char type) {this.type = type;}
+    public void setTypeAbove(char typeAbove) {this.typeAbove = typeAbove;}
+
+    public void setTypeBelow(char typeBelow) {this.typeBelow = typeBelow;}
 }
