@@ -1,5 +1,7 @@
 package isel.poo.sokoban.model;
 
+import isel.poo.sokoban.view.StatusPanel;
+
 public class Level {
 
     private int levelNumber;
@@ -200,15 +202,17 @@ public class Level {
             case DOWN:
             case RIGHT:
             case LEFT:
+                cells[lineMan][colMan].setTypeAbove(' ');
+                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
+                lineMan += dir.AddToLine();
+                colMan += dir.AddToCol();
+                moves += 1;
                 if(checkBoxesInPlace()){
                     isFinished=true;
+                    print();
+                    System.out.println();
                 }
                 else {
-                    cells[lineMan][colMan].setTypeAbove(' ');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
                     isFinished = true;
                     manIsDead = true;
                     print();
