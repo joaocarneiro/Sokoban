@@ -315,6 +315,7 @@ public class Level {
             }
             System.out.println();
         }
+        System.out.println(getNumber());
         System.out.println(getMoves());
         System.out.println(getRemainingBoxes());
     }
