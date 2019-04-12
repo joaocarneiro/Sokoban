@@ -1,6 +1,9 @@
 package isel.poo.sokoban.model;
 
+import isel.leic.pg.Console;
 import isel.poo.sokoban.view.StatusPanel;
+
+import static java.awt.event.KeyEvent.VK_S;
 
 public class Level {
 
@@ -17,6 +20,9 @@ public class Level {
     private boolean isFinished = false;
     private Cell[][] cells;
     private int lineMan = 0, colMan = 0;
+    private int initialLineMan = 0, initialColMan = 0;
+    private boolean found;
+    private int startingBoxes;
 
     public Level(int levelNumber, int height, int width) {
         this.levelNumber = levelNumber;
@@ -61,7 +67,7 @@ public class Level {
     }
 
     public void getManInitialPosition() {
-        boolean found = false;
+        found = false;
         if (lineMan == 0 && colMan == 0) {
             for (line = 0; line < cells.length && !found; ++line) {
                 for (col = 0; col < cells[line].length && !found; ++col)
@@ -69,6 +75,8 @@ public class Level {
                         found = true;
                         lineMan = cells[line][col].getLine();
                         colMan = cells[line][col].getCol();
+                        initialLineMan=lineMan;
+                        initialColMan=colMan;
                     }
             }
         }
@@ -114,8 +122,9 @@ public class Level {
                         cells[lineMan][colMan].setTypeAbove('*');
                         cells[lineMan][colMan].setTypeBelow(' ');
                     }
-                    else
+                    else {
                         cells[lineMan][colMan].setTypeAbove(' ');
+                    }
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove('B');
                     lineMan += dir.AddToLine();
@@ -159,8 +168,9 @@ public class Level {
                         cells[lineMan][colMan].setTypeAbove('*');
                         cells[lineMan][colMan].setTypeBelow(' ');
                     }
-                    else
+                    else {
                         cells[lineMan][colMan].setTypeAbove(' ');
+                    }
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeAbove('B');
                     lineMan += dir.AddToLine();
@@ -248,6 +258,7 @@ public class Level {
                 }
             }
         }
+        startingBoxes=boxes;
         start=true;
     }
 
@@ -299,6 +310,15 @@ public class Level {
     }
 
     public void reset() {
+        moves=0;
+        start=false;
+        boxes=startingBoxes;
+        cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
+        cells[lineMan][colMan].setTypeBelow(' ');
+        lineMan=initialLineMan;
+        colMan=initialColMan;
+        cells[lineMan][colMan].setTypeAbove(' ');
+        cells[lineMan][colMan].setTypeBelow(' ');
     }
 
     public void put(int line, int col, char type) {
