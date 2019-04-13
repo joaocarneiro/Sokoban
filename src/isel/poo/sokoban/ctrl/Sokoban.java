@@ -123,6 +123,7 @@ public class Sokoban {
                 level.moveMan(dir);
                 status.setMoves(level.getMoves());
                 status.setBoxes(level.getRemainingBoxes());
+                status.repaint();
             }
         }
     }

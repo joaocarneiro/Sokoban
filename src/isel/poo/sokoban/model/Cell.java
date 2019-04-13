@@ -5,6 +5,9 @@ public class Cell {
     private int c;
     private char typeAbove;
     private char typeBelow;
+    private Actor actor;
+
+    public Cell(){}
 
     public Cell(int l, int c){
         this.l=l;

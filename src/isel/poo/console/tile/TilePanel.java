@@ -1,7 +1,6 @@
 package isel.poo.console.tile;
 
 import isel.poo.console.ParentView;
-import isel.poo.console.View;
 import isel.leic.pg.Console;
 import isel.leic.pg.Location;
 

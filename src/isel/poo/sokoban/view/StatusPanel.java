@@ -3,6 +3,8 @@ package isel.poo.sokoban.view;
 import isel.leic.pg.Console;
 import isel.poo.console.FieldView;
 import isel.poo.console.ParentView;
+import isel.poo.console.View;
+import isel.poo.console.Window;
 import jdk.net.SocketFlow;
 
 import java.awt.*;
@@ -14,7 +16,7 @@ import static java.awt.Color.*;
 public class StatusPanel extends ParentView {
 
     public static int WIDTH=5;
-    private int WIN_WIDTH;
+    protected int WIN_WIDTH;
     private int levelNumber;
     private int remainingBoxes;
     private int moves;
@@ -31,14 +33,10 @@ public class StatusPanel extends ParentView {
         initStatusPanel();
     }
 
-    public void write(int line, int col, String text, int foreground, int background) {
-        cursor(line,col);
-        color(foreground,background);
-        Console.print(text);
-    }
-
     private void initStatusPanel(){
         panel = new ParentView(0,WIN_WIDTH-2,17,7, Console.DARK_GRAY);
+        panel.repaint();
+
         fieldLevel = new FieldView("Level", 1,WIN_WIDTH-1, getLevelNumber()+"");
         fieldMoves = new FieldView("Moves", 4,WIN_WIDTH-1, getMoves()+"");
         fieldBoxes = new FieldView("Boxes", 7,WIN_WIDTH-1, getRemainingBoxes()+"");
@@ -53,13 +51,6 @@ public class StatusPanel extends ParentView {
         fieldLevel.repaint();
         fieldMoves.repaint();
         fieldBoxes.repaint();
-
-        write(0,4,"\nCursor",Console.YELLOW, Console.DARK_GRAY);
-        write(0,4,"\nmove",Console.WHITE, Console.DARK_GRAY);
-        write(0,4,"\nEsc",Console.YELLOW, Console.DARK_GRAY);
-        write(0,4,"\nfinish",Console.WHITE, Console.DARK_GRAY);
-        write(0,4,"\nS",Console.YELLOW, Console.DARK_GRAY);
-        write(0,4,"\nstart",Console.WHITE, Console.DARK_GRAY);
     }
 
     public void setLevel(int levelNumber){ this.levelNumber=levelNumber; }
