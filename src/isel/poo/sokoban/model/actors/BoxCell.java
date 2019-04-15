@@ -12,11 +12,6 @@ public class BoxCell extends Cell {
         super(typeAbove,typeBelow);
     }
 
-//    @Override
-//    public void updateCell(char typeAbove, char typeBelow) {
-//        this.cellBelow = cellAbove;
-//    }
-
     public static char getBOX_CHARACTER() {
         return BOX_CHARACTER;
     }

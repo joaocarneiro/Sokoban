@@ -12,11 +12,6 @@ public class ObjectiveWithBoxCell extends Cell {
         super(typeAbove,typeBelow);
     }
 
-//    @Override
-//    public void updateCell(char typeAbove, char typeBelow) {
-//        this.cellBelow = cellAbove;
-//    }
-
     public static char getOBJECTIVEWITHBOX_CHARACTER() {
         return OBJECTIVEWITHBOX_CHARACTER;
     }

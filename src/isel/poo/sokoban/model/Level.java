@@ -385,13 +385,4 @@ public class Level {
         else
             cells[line][col] = new Cell(line, col, type, cells[line][col].getTypeAbove());
     }
-
-//    public void print() {
-//        for (int i = 0; i < cells.length; ++i) {
-//            for (int j = 0; j < cells[i].length; ++j) {
-//                System.out.println(cells[i][j].getTypeAbove()+"-"+cells[i][j].getTypeBelow());
-//            }
-//            System.out.println();
-//        }
-//    }
 }

@@ -12,11 +12,6 @@ public class ManCell extends Cell {
         super(typeAbove,typeBelow);
     }
 
-//    @Override
-//    public void updateCell(char typeAbove, char typeBelow) {
-//        this.cellBelow = cellAbove;
-//    }
-
     public static char getMAN_CHARACTER() {
         return MAN_CHARACTER;
     }

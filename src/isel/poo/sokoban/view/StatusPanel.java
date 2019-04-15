@@ -3,15 +3,6 @@ package isel.poo.sokoban.view;
 import isel.leic.pg.Console;
 import isel.poo.console.FieldView;
 import isel.poo.console.ParentView;
-import isel.poo.console.View;
-import isel.poo.console.Window;
-import jdk.net.SocketFlow;
-
-import java.awt.*;
-import java.lang.reflect.Field;
-
-import static isel.leic.pg.Console.*;
-import static java.awt.Color.*;
 
 public class StatusPanel extends ParentView {
 
@@ -24,9 +15,6 @@ public class StatusPanel extends ParentView {
     private FieldView fieldLevel;
     private FieldView fieldMoves;
     private FieldView fieldBoxes;
-    private FieldView fieldCursor;
-    private FieldView fieldEsc;
-    private FieldView fieldS;
 
     public StatusPanel(int WIN_WIDTH) {
         this.WIN_WIDTH=WIN_WIDTH;
