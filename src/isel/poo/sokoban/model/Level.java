@@ -1,6 +1,5 @@
 package isel.poo.sokoban.model;
 
-import isel.poo.sokoban.ctrl.Sokoban;
 import isel.poo.sokoban.model.actors.BoxCell;
 import isel.poo.sokoban.model.actors.ManCell;
 import isel.poo.sokoban.model.actors.ObjectiveWithBoxCell;
@@ -20,7 +19,6 @@ public class Level {
     private boolean manIsDead = false;
     private boolean isFinished = false;
     private Cell[][] cells;
-    private Cell[][] initialCells;
     private int lineMan = 0, colMan = 0;
     private int initialLineMan = 0, initialColMan = 0;
     private boolean found;
@@ -46,23 +44,23 @@ public class Level {
         startingBoxes();
         isFinished();
         manIsDead();
-        print();
+        //print();
     }
 
     public void moveMan(Dir dir) {
         getManInitialPosition();
         switch (dir) {
             case UP:
-                moveAgainst(dir);
+                moveTo(dir);
                 break;
             case DOWN:
-                moveAgainst(dir);
+                moveTo(dir);
                 break;
             case RIGHT:
-                moveAgainst(dir);
+                moveTo(dir);
                 break;
             case LEFT:
-                moveAgainst(dir);
+                moveTo(dir);
                 break;
         }
     }
@@ -83,7 +81,7 @@ public class Level {
         }
     }
 
-    public void moveAgainst(Dir dir) {
+    public void moveTo(Dir dir) {
         char type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
         switch (type) {
             case ' ':
@@ -106,7 +104,7 @@ public class Level {
             isFinished=true;
             start=false;
             found=false;
-            print();
+            //print();
             System.out.println();
         }
     }
@@ -116,11 +114,11 @@ public class Level {
         cells[lineMan][colMan].setTypeBelow(' ');
         cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
         observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-        observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER())*/);
+        observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan));
         lineMan += dir.AddToLine();
         colMan += dir.AddToCol();
         moves += 1;
-        print();
+        //print();
         System.out.println();
     }
 
@@ -138,11 +136,11 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new BoxCell().updateCell(BoxCell.getBOX_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) );
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
                 if(type=='H'){
@@ -153,11 +151,11 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
                 if(type=='*'){
@@ -168,12 +166,12 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new ObjectiveWithBoxCell().updateCell(ObjectiveWithBoxCell.getOBJECTIVEWITHBOX_CHARACTER(), ObjectiveCell.getOBJECTIVE_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) );
 
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     checkForVictory();
                     System.out.println();
                 }
@@ -189,11 +187,11 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new BoxCell().updateCell(BoxCell.getBOX_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeBelow()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan)/* new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
                 if(type=='H'){
@@ -204,11 +202,11 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) );
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
                 if(type=='*') {
@@ -219,11 +217,11 @@ public class Level {
                     cells[lineMan][colMan].setTypeBelow(' ');
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new ObjectiveWithBoxCell().updateCell(ObjectiveWithBoxCell.getOBJECTIVEWITHBOX_CHARACTER(), ObjectiveCell.getOBJECTIVE_CHARACTER()));
                     observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
-                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                    observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) );
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     checkForVictory();
                     System.out.println();
                 }
@@ -240,13 +238,13 @@ public class Level {
                 cells[lineMan][colMan].setTypeAbove(' ');
                 cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
                 observer.cellUpdated(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new HoleCell().updateCell(HoleCell.getHOLE_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
-                observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) /*new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER())*/);
+                observer.cellReplaced(lineMan, colMan, getCell(lineMan,colMan) );
                 lineMan += dir.AddToLine();
                 colMan += dir.AddToCol();
                 moves += 1;
                 isFinished = true;
                 manIsDead = true;
-                print();
+                //print();
                 System.out.println();
                 break;
         }
@@ -268,7 +266,7 @@ public class Level {
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
                 else if(cells[lineMan][colMan].getTypeBelow()!='*'){
@@ -281,7 +279,7 @@ public class Level {
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
-                    print();
+                    //print();
                     System.out.println();
                 }
         }
@@ -364,7 +362,17 @@ public class Level {
         cells[lineMan][colMan].setTypeBelow(' ');
         lineMan=initialLineMan;
         colMan=initialColMan;
-        cells=initialCells;
+        resetToInitialPositionsOnBoard();
+    }
+
+    private void resetToInitialPositionsOnBoard() {
+        for (int i = 0; i < cells.length; ++i) {
+            for (int j = 0; j < cells[i].length; ++j) {
+                cells[i][j].setTypeAbove(' ');
+                cells[i][j].setTypeBelow(' ');
+            }
+            System.out.println();
+        }
     }
 
     public Cell getCell(int line, int col) {
@@ -376,15 +384,14 @@ public class Level {
             cells[line][col] = new Cell(line, col, type, ' ');
         else
             cells[line][col] = new Cell(line, col, type, cells[line][col].getTypeAbove());
-        initialCells=cells;
     }
 
-    public void print() {
-        for (int i = 0; i < cells.length; ++i) {
-            for (int j = 0; j < cells[i].length; ++j) {
-                System.out.print(cells[i][j].getTypeAbove());
-            }
-            System.out.println();
-        }
-    }
+//    public void print() {
+//        for (int i = 0; i < cells.length; ++i) {
+//            for (int j = 0; j < cells[i].length; ++j) {
+//                System.out.println(cells[i][j].getTypeAbove()+"-"+cells[i][j].getTypeBelow());
+//            }
+//            System.out.println();
+//        }
+//    }
 }
