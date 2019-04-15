@@ -1,5 +1,8 @@
 package isel.poo.sokoban.model;
 
+import isel.poo.sokoban.model.actors.BoxCell;
+import isel.poo.sokoban.model.actors.ManCell;
+import isel.poo.sokoban.model.actors.ObjectiveWithBoxCell;
 import isel.poo.sokoban.model.cells.*;
 import isel.poo.sokoban.view.cellTiles.*;
 
@@ -32,22 +35,29 @@ public class Cell {
         return cell;
     }
 
-//    public Cell getCell(char type){
-//        switch (type) {
-//            case '.':
-//                return new EmptyCell();
-//            case ' ':
-//                return new FloorCell();
-//            case 'X':
-//                return new ObstacleCell();
-//            case 'H':
-//                return new HoleCell();
-//            case '*':
-//                return new ObjectiveCell();
-//            default:
-//                return new EmptyCell();
-//        }
-//    }
+    public  Cell getCell(char type){
+        if((type=='B'||type=='o')&&typeBelow=='*')
+            return new ObjectiveWithBoxCell();
+        switch (type) {
+            case '.':
+                return new EmptyCell();
+            case ' ':
+                return new FloorCell();
+            case 'X':
+                return new ObstacleCell();
+            case 'H':
+                return new HoleCell();
+            case '*':
+                return new ObjectiveCell();
+            case '@':
+                return new ManCell();
+            case 'o':
+            case 'B':
+                return new BoxCell();
+            default:
+                return new EmptyCell();
+        }
+    }
 
     public Cell getCellAbove() {
         return cellAbove;

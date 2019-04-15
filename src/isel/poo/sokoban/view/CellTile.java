@@ -13,7 +13,7 @@ public class CellTile extends Tile {
     }
 
     public static Tile tileOf(Cell cell) {
-        if(cell.getTypeBelow()=='*' && cell.getTypeAbove()=='B')
+        if((cell.getTypeBelow()=='*' || cell.getTypeBelow()=='+') && (cell.getTypeAbove()=='B' ||cell.getTypeAbove()=='o'))
             return new ObjectiveWithBoxTile();
         else {
             switch (cell.getTypeAbove()) {
@@ -23,11 +23,13 @@ public class CellTile extends Tile {
                     return new ObstacleTile();
                 case 'H':
                     return new HoleTile();
+                case '+':
                 case '*':
                     return new ObjectiveTile();
                 case '@':
                     return new ManTile();
                 case 'B':
+                case 'o':
                     return new BoxTile();
                 default:
                     return new EmptyTile();
