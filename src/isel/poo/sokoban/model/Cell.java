@@ -1,47 +1,75 @@
 package isel.poo.sokoban.model;
+
+import isel.poo.sokoban.model.cells.*;
+import isel.poo.sokoban.view.cellTiles.*;
+
 public class Cell {
 
+    protected Cell cellAbove;
+    protected Cell cellBelow;
     private int l;
     private int c;
-    private char typeAbove;
-    private char typeBelow;
-    private Actor actor;
+    protected char typeAbove;
+    protected char typeBelow;
 
-    public Cell(){}
-
-    public Cell(int l, int c){
-        this.l=l;
-        this.c=c;
+    public Cell() {
     }
 
-    public Cell(int l, int c, char typeAbove, char typeBelow){
-        this.l=l;
-        this.c=c;
-        this.typeAbove=typeAbove;
-        this.typeBelow=typeBelow;
+    public Cell(char typeAbove, char typeBelow) {
+        this.typeAbove = typeAbove;
+        this.typeBelow = typeBelow;
     }
 
-    public int getLine(){
-        return this.l;
+    public Cell(int l, int c, char typeAbove, char typeBelow) {
+        this.l = l;
+        this.c = c;
+        this.typeAbove = typeAbove;
+        this.typeBelow = typeBelow;
     }
 
-    public int getCol(){
-        return this.c;
+    public Cell updateCell(char typeAbove, char typeBelow) {
+        Cell cell = new Cell(l,c,typeAbove,typeBelow);
+        return cell;
     }
 
-    public char getTypeAbove() {return this.typeAbove;}
+//    public Cell getCell(char type){
+//        switch (type) {
+//            case '.':
+//                return new EmptyCell();
+//            case ' ':
+//                return new FloorCell();
+//            case 'X':
+//                return new ObstacleCell();
+//            case 'H':
+//                return new HoleCell();
+//            case '*':
+//                return new ObjectiveCell();
+//            default:
+//                return new EmptyCell();
+//        }
+//    }
 
-    public char getTypeBelow() {return this.typeBelow;}
-
-    public void setLine(int line){
-        this.l=line;
+    public Cell getCellAbove() {
+        return cellAbove;
     }
 
-    public void setCol(int col){
-        this.c=col;
+    public Cell getCellBelow() {
+        return cellBelow;
     }
 
-    public void setTypeAbove(char typeAbove) {this.typeAbove = typeAbove;}
+    public char getTypeAbove() {
+        return this.typeAbove;
+    }
 
-    public void setTypeBelow(char typeBelow) {this.typeBelow = typeBelow;}
+    public char getTypeBelow() {
+        return this.typeBelow;
+    }
+
+    public void setTypeAbove(char typeAbove) {
+        this.typeAbove = typeAbove;
+    }
+
+    public void setTypeBelow(char typeBelow) {
+        this.typeBelow = typeBelow;
+    }
 }

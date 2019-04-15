@@ -1,9 +1,9 @@
 package isel.poo.sokoban.model;
 
-import isel.poo.sokoban.model.cells.Floor;
-import isel.poo.sokoban.model.cells.Hole;
-import isel.poo.sokoban.model.cells.Objective;
-import isel.poo.sokoban.model.cells.Obstacle;
+import isel.poo.sokoban.model.actors.BoxCell;
+import isel.poo.sokoban.model.actors.ManCell;
+import isel.poo.sokoban.model.actors.ObjectiveWithBoxCell;
+import isel.poo.sokoban.model.cells.*;
 
 public class Level {
 
@@ -31,13 +31,12 @@ public class Level {
         cells = new Cell[height][width];
     }
 
-    public void setObserver(Observer updater) {
-        observer = updater;
+    public void setObserver(Observer observer) {
+        this.observer = observer;
     }
 
     public interface Observer {
         void cellUpdated(int l, int c, Cell cell);
-
         void cellReplaced(int l, int c, Cell cell);
     }
 
@@ -73,8 +72,8 @@ public class Level {
                 for (col = 0; col < cells[line].length && !found; ++col)
                     if (cells[line][col].getTypeAbove() == '@') {
                         found = true;
-                        lineMan = cells[line][col].getLine();
-                        colMan = cells[line][col].getCol();
+                        lineMan = line;
+                        colMan = col;
                         initialLineMan=lineMan;
                         initialColMan=colMan;
                     }
@@ -86,23 +85,16 @@ public class Level {
         char type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
         switch (type) {
             case ' ':
-                cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow()); //onde esta
-                cells[lineMan][colMan].setTypeBelow(' ');
-                cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@'); //para onde vai
-                lineMan += dir.AddToLine();
-                colMan += dir.AddToCol();
-                moves += 1;
-                print();
-                System.out.println();
+                movedAgainstFloor(dir);
                 break;
             case 'B':
-                checkBoxSurroundings(dir);
+                movedAgainstBox(dir);
                 break;
             case 'H':
-                pitOfDeath(dir);
+                movedAgainstHole(dir);
                 break;
             case '*':
-                specialPlace(dir);
+                movedAgainstObjective(dir);
                 break;
         }
     }
@@ -115,18 +107,34 @@ public class Level {
         }
     }
 
-    public void checkBoxSurroundings(Dir dir){
+    public void movedAgainstFloor(Dir dir){
+        cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
+        cells[lineMan][colMan].setTypeBelow(' ');
+        cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
+        observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+        observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
+        lineMan += dir.AddToLine();
+        colMan += dir.AddToCol();
+        moves += 1;
+        print();
+        System.out.println();
+    }
+
+    public void movedAgainstBox(Dir dir){
         char type;
         switch (dir){
             case UP:
             case DOWN:
                 type = cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].getTypeAbove();
                 if(type==' '){
-                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeBelow(type);
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeBelow(' ');
                     cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove('B');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+                    observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new BoxCell().updateCell(BoxCell.getBOX_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -134,11 +142,14 @@ public class Level {
                     System.out.println();
                 }
                 if(type=='H'){
-                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeBelow(type);
+                    cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeBelow(' ');
                     cells[lineMan + dir.AddToLine()*2][colMan + dir.AddToCol()].setTypeAbove(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+                    observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -151,6 +162,9 @@ public class Level {
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+                    observer.cellReplaced(lineMan + dir.AddToLine()*2,colMan + dir.AddToCol(), new ObjectiveWithBoxCell().updateCell(ObjectiveWithBoxCell.getOBJECTIVEWITHBOX_CHARACTER(), ObjectiveCell.getOBJECTIVE_CHARACTER()));
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -168,6 +182,9 @@ public class Level {
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+//                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new BoxCell().updateCell(BoxCell.getBOX_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+//                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(cells[lineMan][colMan].getTypeBelow(),FloorCell.getFLOOR_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -175,11 +192,14 @@ public class Level {
                     System.out.println();
                 }
                 if(type=='H'){
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeBelow(type);
+                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeBelow(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()*2].setTypeAbove(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -192,6 +212,9 @@ public class Level {
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
+//                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol()*2, new ObjectiveWithBoxCell().updateCell(ObjectiveWithBoxCell.getOBJECTIVEWITHBOX_CHARACTER(), ObjectiveCell.getOBJECTIVE_CHARACTER()));
+//                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),FloorCell.getFLOOR_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -203,7 +226,7 @@ public class Level {
         }
     }
 
-    public void pitOfDeath(Dir dir){
+    public void movedAgainstHole(Dir dir){
         switch (dir) {
             case UP:
             case DOWN:
@@ -211,6 +234,8 @@ public class Level {
             case LEFT:
                 cells[lineMan][colMan].setTypeAbove(' ');
                 cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('H');
+                observer.cellUpdated(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new HoleCell().updateCell(HoleCell.getHOLE_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
+                observer.cellReplaced(lineMan, colMan, new FloorCell().updateCell(FloorCell.getFLOOR_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                 lineMan += dir.AddToLine();
                 colMan += dir.AddToCol();
                 moves += 1;
@@ -222,39 +247,32 @@ public class Level {
         }
     }
 
-    public void specialPlace(Dir dir){
-        char type = cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].getTypeAbove();
+    public void movedAgainstObjective(Dir dir){
         switch (dir) {
             case UP:
             case DOWN:
             case LEFT:
             case RIGHT:
-                if(type=='*' && cells[lineMan][colMan].getTypeBelow()=='*'){
+                if(cells[lineMan][colMan].getTypeBelow()=='*'){
                     cells[lineMan][colMan].setTypeAbove('*');
                     cells[lineMan][colMan].setTypeBelow(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow('*');
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),ObjectiveCell.getOBJECTIVE_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new ObjectiveCell().updateCell(ObjectiveCell.getOBJECTIVE_CHARACTER(),EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
                     print();
                     System.out.println();
                 }
-                else if(type=='*' && cells[lineMan][colMan].getTypeBelow()!='*'){
+                else if(cells[lineMan][colMan].getTypeBelow()!='*'){
                     cells[lineMan][colMan].setTypeAbove(cells[lineMan][colMan].getTypeBelow());
                     cells[lineMan][colMan].setTypeBelow(' ');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
                     cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow('*');
-                    lineMan += dir.AddToLine();
-                    colMan += dir.AddToCol();
-                    moves += 1;
-                    print();
-                    System.out.println();
-                }
-                else {
-                    cells[lineMan][colMan].setTypeAbove(' ');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeAbove('@');
-                    cells[lineMan + dir.AddToLine()][colMan + dir.AddToCol()].setTypeBelow('*');
+                    observer.cellReplaced(lineMan + dir.AddToLine(),colMan + dir.AddToCol(), new ManCell().updateCell(ManCell.getMAN_CHARACTER(),ObjectiveCell.getOBJECTIVE_CHARACTER()));
+                    observer.cellReplaced(lineMan, colMan, new Cell(cells[lineMan][colMan].getTypeBelow(), EmptyCell.getEMPTY_CHARACTER()));
                     lineMan += dir.AddToLine();
                     colMan += dir.AddToCol();
                     moves += 1;
@@ -297,25 +315,6 @@ public class Level {
         return this.width;
     }
 
-    public Cell getCell(int line, int col) {
-        Cell cell = new Cell(line, col);
-        switch (cell.getTypeAbove()){
-            case ' ':
-                new Floor(' ');
-                break;
-            case 'X':
-                new Obstacle('-');
-                break;
-            case 'H':
-                new Hole('o');
-                break;
-            case '*':
-                new Objective('+');
-                break;
-        }
-        return cell;
-    }
-
     public boolean manIsDead() {
         return this.manIsDead;
     }
@@ -350,9 +349,13 @@ public class Level {
         cells[lineMan][colMan].setTypeBelow(' ');
     }
 
+    public Cell getCell(int line, int col) {
+        return cells[line][col];
+    }
+
     public void put(int line, int col, char type) {
         if(cells[line][col]==null)
-            cells[line][col] = new Cell(line, col, type,' ');
+            cells[line][col] = new Cell(line, col, type, ' ');
         else
             cells[line][col] = new Cell(line, col, type, cells[line][col].getTypeAbove());
     }
@@ -364,12 +367,5 @@ public class Level {
             }
             System.out.println();
         }
-
-//        for (int i = 0; i < cells.length; i+=2) {
-//            for (int j = 0; j < cells[i].length; j+=2) {
-//                System.out.print(cells[i][j].getTypeAbove());
-//            }
-//            System.out.println();
-//        }
     }
 }
